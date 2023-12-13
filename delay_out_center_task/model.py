@@ -275,12 +275,12 @@ import numpy.random
 default_targets_list \
   = [dict(position=dict(x=+1.0, y=+0.0, z=+0.0)),
      dict(position=dict(x=+0.0, y=+1.0, z=+0.0)),
-     dict(position=dict(x=+1.0, y=+1.0, z=+0.0)),
+     dict(position=dict(x=+0.7, y=+0.7, z=+0.0)),
      dict(position=dict(x=-1.0, y=-0.0, z=+0.0)),
      dict(position=dict(x=-0.0, y=-1.0, z=+0.0)),
-     dict(position=dict(x=-1.0, y=-1.0, z=+0.0)),
-     dict(position=dict(x=+1.0, y=-1.0, z=+0.0)),
-     dict(position=dict(x=-1.0, y=+1.0, z=+0.0)),
+     dict(position=dict(x=-0.7, y=-0.7, z=+0.0)),
+     dict(position=dict(x=+0.7, y=-0.7, z=+0.0)),
+     dict(position=dict(x=-0.7, y=+0.7, z=+0.0)),
     ]
 default_targets = {n: v for (n, v) in enumerate(default_targets_list)}
 """ Default center-out, out-center target set, with outer targets positioned 
@@ -349,29 +349,32 @@ class Model:
         set_default = self.parameters.setdefault
         
         # Initialize default timeout parameters.
-        set_default('timeout_s.move_a',     2.000)
-        set_default('timeout_s.hold_a',     0.500)
-        set_default('timeout_s.delay_a',    0.500)
-        set_default('timeout_s.delay_b',    0.500)
-        set_default('timeout_s.move_b',     1.000)
-        set_default('timeout_s.hold_b',     0.500)
-        set_default('timeout_s.move_c',     1.000)
-        set_default('timeout_s.hold_c',     0.500)
-        set_default('timeout_s.failure',    0.200)
-        set_default('timeout_s.success',    0.010)
-        set_default('timeout_s.intertrial', 0.005)
+        set_default('timeout_s.move_a',      2.000)
+        set_default('timeout_s.hold_a',      0.500)
+        set_default('timeout_s.overshoot_a', 1.500)
+        set_default('timeout_s.delay_a',     0.500)
+        set_default('timeout_s.move_b',      1.000)
+        set_default('timeout_s.hold_b',      0.500)
+        set_default('timeout_s.overshoot_b', 1.500)
+        set_default('timeout_s.delay_b',     0.500)
+        set_default('timeout_s.move_c',      1.000)
+        set_default('timeout_s.hold_c',      0.500)
+        set_default('timeout_s.overshoot_c', 1.500)
+        set_default('timeout_s.failure',     0.200)
+        set_default('timeout_s.success',     0.010)
+        set_default('timeout_s.intertrial',  0.005)
         
         # Initialize default sphere parameters.
-        set_default('cursor.radius',  0.1)
-        set_default('cursor.color.r', 0.0)
-        set_default('cursor.color.g', 1.0)
-        set_default('cursor.color.b', 0.0)
-        set_default('cursor.color.a', 1.0)
-        set_default('target.radius',  0.2)
-        set_default('target.color.r', 0.0)
-        set_default('target.color.g', 0.0)
-        set_default('target.color.b', 1.0)
-        set_default('target.color.a', 0.5)
+        set_default('cursor.radius',   0.1)
+        set_default('cursor.color.r',  0.0)
+        set_default('cursor.color.g',  1.0)
+        set_default('cursor.color.b',  0.0)
+        set_default('cursor.color.a',  0.9)
+        set_default('target.radius',  0.15)
+        set_default('target.color.r',  0.0)
+        set_default('target.color.g',  0.0)
+        set_default('target.color.b',  1.0)
+        set_default('target.color.a',  0.9)
         
         # Set target file path.
         set_default('paths.targets', '') #None) #'config/targets.yaml')
@@ -639,6 +642,18 @@ class Model:
         # Reset the timeout timer.
         self.cancel_timeout()
         
+    def on_enter_overshoot_a(self, event_data=None):
+        """ Initialize the "overshoot_a" state. """
+
+        # Set the timeout timer.        
+        self.set_parameterized_timeout('overshoot_a')
+        
+    def on_exit_overshoot_a(self, event_data=None):
+        """ Terminate the "overshoot_a" state. """
+        
+        # Reset the timeout timer.
+        self.cancel_timeout()
+    
     def on_enter_delay_a(self, event_data=None):
         """ Initialize the "delay_a" state. """
         
@@ -709,6 +724,18 @@ class Model:
         # Reset the timeout timer.
         self.cancel_timeout()
         
+    def on_enter_overshoot_b(self, event_data=None):
+        """ Initialize the "overshoot_b" state. """
+
+        # Set the timeout timer.        
+        self.set_parameterized_timeout('overshoot_b')
+        
+    def on_exit_overshoot_b(self, event_data=None):
+        """ Terminate the "overshoot_b" state. """
+        
+        # Reset the timeout timer.
+        self.cancel_timeout()
+
     def on_enter_delay_b(self, event_data=None):
         """ Initialize the "delay_b" state. """
         
@@ -774,6 +801,18 @@ class Model:
         
     def on_exit_hold_c(self, event_data=None):
         """ Terminate the "hold_c" state. """
+        
+        # Reset the timeout timer.
+        self.cancel_timeout()
+
+    def on_enter_overshoot_c(self, event_data=None):
+        """ Initialize the "overshoot_c" state. """
+
+        # Set the timeout timer.        
+        self.set_parameterized_timeout('overshoot_c')
+        
+    def on_exit_overshoot_c(self, event_data=None):
+        """ Terminate the "overshoot_c" state. """
         
         # Reset the timeout timer.
         self.cancel_timeout()

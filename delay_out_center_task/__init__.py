@@ -18,7 +18,7 @@ TBD.
 
 
 # Define the version.
-__version__ = '1.0.0'
+__version__ = '1.0.2'
 
 # Import local objects.
 from .model import Model
